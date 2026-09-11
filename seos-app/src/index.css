@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+:root {
+  /* Light mode (slate/blue) */
+  --app-bg: #f8fafc;
+  --app-surface: #ffffff;
+  --app-surface-2: #f1f5f9;
+  --app-surface-3: #e2e8f0;
+  --app-border: #e2e8f0;
+  --app-border-2: #cbd5e1;
+  --app-accent: #3b82f6;
+  --app-accent-2: #60a5fa;
+  --app-accent-glow: rgba(59, 130, 246, 0.25);
+  --app-green: #10b981;
+  --app-green-glow: rgba(16, 185, 129, 0.25);
+  --app-amber: #f59e0b;
+  --app-red: #ef4444;
+  --app-cyan: #06b6d4;
+  --app-text: #0f172a;
+  --app-text-2: #475569;
+  --app-text-3: #64748b;
+}
+
+.dark {
+  /* Dark mode (bluish dark) */
+  --app-bg: #0b1121;
+  --app-surface: #151e32;
+  --app-surface-2: #1e293b;
+  --app-surface-3: #334155;
+  --app-border: #1e293b;
+  --app-border-2: #334155;
+  --app-accent: #6366f1;
+  --app-accent-2: #818cf8;
+  --app-accent-glow: rgba(99, 102, 241, 0.35);
+  --app-green: #10b981;
+  --app-green-glow: rgba(16, 185, 129, 0.35);
+  --app-amber: #f59e0b;
+  --app-red: #ef4444;
+  --app-cyan: #06b6d4;
+  --app-text: #f8fafc;
+  --app-text-2: #cbd5e1;
+  --app-text-3: #94a3b8;
+}
+
+@theme {
+  --color-seos-bg: var(--app-bg);
+  --color-seos-primary: var(--app-accent);
+  --color-seos-surface: var(--app-surface);
+  --color-seos-surface-2: var(--app-surface-2);
+  --color-seos-surface-3: var(--app-surface-3);
+  --color-seos-border: var(--app-border);
+  --color-seos-border-2: var(--app-border-2);
+  --color-seos-accent: var(--app-accent);
+  --color-seos-accent-2: var(--app-accent-2);
+  --color-seos-accent-glow: var(--app-accent-glow);
+  --color-seos-green: var(--app-green);
+  --color-seos-green-glow: var(--app-green-glow);
+  --color-seos-amber: var(--app-amber);
+  --color-seos-red: var(--app-red);
+  --color-seos-cyan: var(--app-cyan);
+  --color-seos-text: var(--app-text);
+  --color-seos-text-2: var(--app-text-2);
+  --color-seos-text-3: var(--app-text-3);
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  background: var(--color-seos-bg);
+  color: var(--color-seos-text);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-seos-border-2);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-seos-text-3);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px var(--color-seos-accent-glow); }
+  50% { box-shadow: 0 0 20px var(--color-seos-accent-glow), 0 0 40px var(--color-seos-accent-glow); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes node-pop {
+  0% { transform: scale(0.9); opacity: 0; }
+  60% { transform: scale(1.03); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+.animate-slide-left { animation: slideInLeft 0.3s ease-out forwards; }
+.animate-slide-right { animation: slideInRight 0.3s ease-out forwards; }
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, var(--color-seos-accent-glow) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+.animate-spin-slow { animation: spin-slow 2s linear infinite; }
+.animate-node-pop { animation: node-pop 0.35s ease-out forwards; }
+
+/* Glass effect */
+.glass {
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-seos-border);
+}
+
+/* Canvas grid pattern */
+.canvas-grid {
+  background-image:
+    radial-gradient(circle, var(--color-seos-border) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
