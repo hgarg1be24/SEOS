@@ -1,0 +1,191 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, fit, backgrounds, calc}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{geometry}
+\geometry{margin=1.5cm, landscape}
+
+\definecolor{ehead}{RGB}{28,54,105}
+
+\begin{document}
+\pagestyle{empty}
+
+\begin{figure}[H]
+\centering
+{\large\bfseries\sffamily Figure 2: End-to-End Pipeline Flowchart}\\[4pt]
+{\normalsize\sffamily Adjusted routing paths and split-box layouts to completely prevent arrow collisions.}
+\vspace{10pt}
+
+\begin{tikzpicture}[
+  node distance=0.6cm and 0.5cm,
+  startstop/.style={
+    rectangle, rounded corners=6pt, draw=green!50!black,
+    fill=green!20, minimum width=4.5cm, minimum height=0.8cm,
+    align=center, font=\normalsize\bfseries},
+  process/.style={
+    rectangle, draw=blue!60!black, fill=blue!8,
+    minimum width=4.5cm, minimum height=0.8cm,
+    align=center, font=\small},
+  splitprocess/.style={
+    rectangle, draw=blue!60!black, fill=blue!8,
+    minimum width=2.1cm, minimum height=0.8cm,
+    align=center, font=\small},
+  decision/.style={
+    diamond, draw=orange!70!black, fill=orange!15,
+    minimum width=1.5cm, minimum height=0.6cm,
+    align=center, font=\small, aspect=2.2, inner sep=0pt},
+  module/.style={
+    rectangle, draw=ehead!60, fill=ehead!5,
+    dashed, rounded corners=6pt, line width=1.2pt,
+    inner xsep=8pt, inner ysep=8pt},
+  modulelabel/.style={
+    font=\normalsize\bfseries\sffamily, text=ehead},
+  arrow/.style={-{Latex[length=5pt, width=4pt]}, thick, draw=gray!70},
+  lbl/.style={font=\scriptsize\sffamily, fill=white, inner sep=1pt}
+]
+
+% ==================== ROW 1 (Left to Right) ====================
+
+% ----- START -----
+\node[startstop] (start) at (0, 1.5) {User enters software idea};
+
+% ----- MODULE 1 (Col 1) -----
+\node[modulelabel] (m1label) at (0, 0) {Module 1 --- Requirements};
+\node[process, below=0.2cm of m1label] (clarify) {AI asks clarification questions};
+\node[process, below=of clarify] (reqgen) {LLM generates Structured Reqs};
+\node[decision, below=of reqgen] (reqappr) {Approve?};
+\node[process, below=of reqappr] (storygen) {LLM generates User Stories};
+\node[decision, below=of storygen] (storyappr) {Approve?};
+
+\node[coordinate, left=1cm of clarify] (m1padleft) {};
+
+\begin{pgfonlayer}{background}
+  \node[module, fit=(m1label)(clarify)(reqgen)(reqappr)(storygen)(storyappr)(m1padleft)] (m1box) {};
+\end{pgfonlayer}
+
+% ----- MODULE 2 (Col 2) -----
+\node[modulelabel] (m2label) at (8.5, 0) {Module 2 --- UML/ER};
+\node[process, below=0.2cm of m2label] (extract) {AI extracts Entities \& Actors};
+\node[process, below=of extract] (mermaidgen) {LLM generates Mermaid Code};
+\node[decision, below=of mermaidgen] (locked) {Locked?};
+
+\node[coordinate, below=0.8cm of locked] (m2mid) {};
+\node[splitprocess, left=0.15cm of m2mid] (manualedit) {Manual Edit};
+\node[splitprocess, right=0.15cm of m2mid] (render) {Render UI};
+
+\begin{pgfonlayer}{background}
+  \node[module, fit=(m2label)(extract)(mermaidgen)(locked)(manualedit)(render)] (m2box) {};
+\end{pgfonlayer}
+
+% ----- MODULE 3 (Col 3) -----
+\node[modulelabel] (m3label) at (17, 0) {Module 3 --- Architecture};
+\node[process, below=0.2cm of m3label] (archanalyze) {AI analyzes scale \& constraints};
+\node[process, below=of archanalyze] (archgen) {LLM recommends Architecture};
+\node[process, below=of archgen] (ragfetch) {RAG fetches from pgvector};
+\node[process, below=of ragfetch] (archexplain) {AI generates explanation};
+
+\begin{pgfonlayer}{background}
+  \node[module, fit=(m3label)(archanalyze)(archgen)(ragfetch)(archexplain)] (m3box) {};
+\end{pgfonlayer}
+
+
+% ==================== ROW 2 (Right to Left / Snake) ====================
+
+% ----- MODULE 4 (Col 3, below M3) -----
+\node[modulelabel] (m4label) at (17, -8.5) {Module 4 --- API Designer};
+\node[process, below=0.2cm of m4label] (endpointgen) {LLM derives REST endpoints};
+\node[process, below=of endpointgen] (openapigen) {LLM generates OpenAPI spec};
+\node[decision, below=of openapigen] (openapival) {Valid?};
+
+\node[coordinate, below=0.8cm of openapival] (m4mid) {};
+\node[splitprocess, left=0.15cm of m4mid] (retry) {Self-correct};
+\node[splitprocess, right=0.15cm of m4mid] (swagger) {Swagger UI};
+
+\node[coordinate, left=1cm of openapigen] (m4padleft) {};
+
+\begin{pgfonlayer}{background}
+  \node[module, fit=(m4label)(endpointgen)(openapigen)(openapival)(retry)(swagger)(m4padleft)] (m4box) {};
+\end{pgfonlayer}
+
+% ----- MODULE 5 (Col 2, below M2) -----
+\node[modulelabel] (m5label) at (8.5, -8.5) {Module 5 --- Docs Engine};
+\node[process, below=0.2cm of m5label] (docgen) {LLM generates SRS, SDD, README};
+\node[decision, below=of docgen] (docregen) {Changed?};
+
+\node[coordinate, right=1cm of docgen] (m5padright) {};
+
+\begin{pgfonlayer}{background}
+  \node[module, fit=(m5label)(docgen)(docregen)(m5padright)] (m5box) {};
+\end{pgfonlayer}
+
+% ----- MODULE 6 (Col 1, below M1) -----
+\node[modulelabel] (m6label) at (0, -8.5) {Module 6 --- Dashboard};
+\node[process, below=0.2cm of m6label] (dashboard) {Progress, Traceability, Logs};
+
+\begin{pgfonlayer}{background}
+  \node[module, fit=(m6label)(dashboard)] (m6box) {};
+\end{pgfonlayer}
+
+% ----- EXPORT -----
+\node[startstop, below=1cm of dashboard] (exportnode) {Export: Markdown / OpenAPI / PNG};
+
+
+% ==================== ARROWS ====================
+\draw[arrow] (start) -- (m1box.north);
+
+% Internal M1 (Safely contained inside padded m1box)
+\draw[arrow] (m1label) -- (clarify);
+\draw[arrow] (clarify) -- (reqgen);
+\draw[arrow] (reqgen) -- (reqappr);
+\draw[arrow] (reqappr) -- node[lbl, right]{Yes} (storygen);
+\draw[arrow] (reqappr.west) -- ++(-1.8,0) node[lbl, above]{No} |- (clarify.west);
+\draw[arrow] (storygen) -- (storyappr);
+\draw[arrow] (storyappr) -- node[lbl, right]{Yes} (m1box.south);
+\draw[arrow] (storyappr.west) -- ++(-1.8,0) node[lbl, above]{No} |- (storygen.west);
+
+% M1 -> M2
+\draw[arrow, ehead, line width=1.5pt] (m1box.east) -- (m2box.west);
+
+% Internal M2
+\draw[arrow] (extract) -- (mermaidgen);
+\draw[arrow] (mermaidgen) -- (locked);
+\draw[arrow] (locked.west) -| node[lbl, pos=0.3, above right]{Locked} (manualedit.north);
+\draw[arrow] (locked.east) -| node[lbl, pos=0.3, above left]{Unlocked} (render.north);
+
+% M2 -> M3
+\draw[arrow, ehead, line width=1.5pt] (m2box.east) -- (m3box.west);
+
+% Internal M3
+\draw[arrow] (archanalyze) -- (archgen);
+\draw[arrow] (archgen) -- (ragfetch);
+\draw[arrow] (ragfetch) -- (archexplain);
+
+% M3 -> M4 (STRAIGHT DOWN)
+\draw[arrow, ehead, line width=1.5pt] (m3box.south) -- (m4box.north);
+
+% Internal M4
+\draw[arrow] (endpointgen) -- (openapigen);
+\draw[arrow] (openapigen) -- (openapival);
+\draw[arrow] (openapival.west) -| node[lbl, pos=0.3, above right]{Invalid} (retry.north);
+\draw[arrow] (openapival.east) -| node[lbl, pos=0.3, above left]{Valid} (swagger.north);
+\draw[arrow] (retry.west) -- ++(-0.6,0) |- (openapigen.west);
+
+% M4 -> M5 (RIGHT TO LEFT)
+\draw[arrow, ehead, line width=1.5pt] (m4box.west) -- (m5box.east);
+
+% Internal M5
+\draw[arrow] (docgen) -- (docregen);
+\draw[arrow] (docregen.east) -- ++(1.8,0) node[lbl, right]{Yes} |- (docgen.east);
+
+% M5 -> M6 (RIGHT TO LEFT)
+\draw[arrow, ehead, line width=1.5pt] (m5box.west) -- (m6box.east);
+
+% M6 -> Export
+\draw[arrow, ehead, line width=1.5pt] (m6box.south) -- (exportnode.north);
+
+\end{tikzpicture}
+\end{figure}
+
+\end{document}
